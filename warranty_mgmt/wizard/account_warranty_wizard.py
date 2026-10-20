@@ -69,14 +69,15 @@ class AccountWarrantyWizard(models.TransientModel):
         # each product, rather than inheriting whatever the product is configured
         # with.
         if "line_ids" in fields_list:
-            values["line_ids"] = [
-                (0, 0, {
-                    "invoice_line_id": line.id,
-                    "product_id": line.product_id.id,
-                    "lot_id": move._get_warranty_line_lot(line).id,
-                })
-                for line in move._get_warrantable_lines()
-            ]
+            wizard_lines = []
+            for invoice_line in move._get_warrantable_lines():
+                available_lots = move._get_uncovered_warranty_lots(invoice_line)
+                wizard_lines.append((0, 0, {
+                    "invoice_line_id": invoice_line.id,
+                    "product_id": invoice_line.product_id.id,
+                    "lot_id": available_lots.id if len(available_lots) == 1 else False,
+                }))
+            values["line_ids"] = wizard_lines
         return values
 
     def action_confirm(self):
@@ -223,6 +224,20 @@ class AccountWarrantyWizardLine(models.TransientModel):
                 raise UserError(_("The product on %s no longer matches its invoice line.", label))
             if line.lot_id and line.lot_id.product_id != line.product_id:
                 raise UserError(_("The selected serial or lot does not match %s.", label))
+            existing_domain = [
+                ("warranty_origin", "=", line.wizard_id.move_id._get_warranty_origin()),
+                ("company_id", "=", line.wizard_id.move_id.company_id.id),
+                ("state", "in", ("draft", "active", "claimed")),
+            ]
+            if line.lot_id:
+                existing_domain.append(("lot_id", "=", line.lot_id.id))
+            elif line.invoice_line_id:
+                existing_domain += [
+                    ("account_move_line_id", "=", line.invoice_line_id.id),
+                    ("lot_id", "=", False),
+                ]
+            if self.env["warranty.coverage"].sudo().search_count(existing_domain):
+                raise UserError(_("This product or lot already has current warranty coverage."))
             if line.duration <= 0:
                 raise UserError(_("The duration for %s must be greater than zero.", label))
             if not line.start_date or not line.expiry_date:

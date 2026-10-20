@@ -1,9 +1,10 @@
 Warranty Management
 ===================
 
-Warranty Management centralizes product warranty policies, coverage records,
-claims, expiry notifications, invoice and vendor bill registration, purchase
-traceability, and dashboard reporting.
+Warranty Management can automatically create product warranty coverage when
+eligible customer invoices and vendor bills are posted. Configure a policy
+default, override it per product, and manage lots, claims, expiry notifications,
+purchase traceability, and dashboard reporting.
 
 Requirements
 ------------
@@ -17,6 +18,17 @@ Customer warranties
 Post a customer invoice and select **Give Customer Warranty**. Choose the
 policy and coverage dates for each eligible product. The created coverage is
 linked to its invoice and invoice line.
+
+Automatic registration
+----------------------
+
+Enable **Automatic Creation** on a policy, then enable warranty handling on
+products and set **Warranty Registration** to **Use Policy Setting**, **Manual**,
+or **Automatic**. Automatic coverage is created after posting a customer invoice
+or vendor bill. The product setting can override the selected policy setting.
+Tracked products use one record per linked lot or serial; if no lot is linked,
+coverage is created at product level. Lines that lack a matching policy or an
+available start date are skipped and explained in document chatter.
 
 Supplier warranties
 -------------------

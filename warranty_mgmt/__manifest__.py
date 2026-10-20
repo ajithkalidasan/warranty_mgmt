@@ -1,10 +1,12 @@
 {
     "name": "Warranty Management",
-    "summary": "Manage product warranties, claims, invoice and supplier-bill coverage",
+    "summary": "Auto-create warranties from invoices and vendor bills; manage claims and lots",
     "description": """
 Warranty management for Odoo Community and Enterprise.
 
 This module provides:
+- automatic warranty creation after posting customer invoices and vendor bills
+- policy-level automatic creation with per-product manual/automatic overrides
 - warranty types
 - warranty policies
 - warranty coverage records
@@ -16,6 +18,7 @@ This module provides:
 - purchase order traceability and warranty dashboard
     """,
     "author": "Ajith",
+    "maintainer": "Ajith <support@ajith.dev>",
     "category": "Warranty",
     "website": "https://ajith.dev",
     "version": "19.0.1.0.0",
@@ -24,7 +27,6 @@ This module provides:
     "data": [
         "security/warranty_security.xml",
         "security/ir.model.access.csv",
-        "security/account_warranty_access.csv",
         "data/warranty_sequence.xml",
         "data/warranty_cron.xml",
         "views/warranty_type_views.xml",

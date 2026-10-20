@@ -11,6 +11,7 @@
                         <group>
                             <field name="warranty_enabled"/>
                             <field name="warranty_policy_id" invisible="not warranty_enabled"/>
+                            <field name="warranty_creation_mode" invisible="not warranty_enabled"/>
                             <field name="warranty_type_id" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>
                             <field name="warranty_duration" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>
                             <field name="warranty_duration_unit" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>

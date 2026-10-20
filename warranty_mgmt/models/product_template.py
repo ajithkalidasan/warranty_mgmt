@@ -15,6 +15,17 @@ class ProductTemplate(models.Model):
         domain="[('active', '=', True)]",
         help="If set, this policy is preferred over the generic policy matching rules.",
     )
+    warranty_creation_mode = fields.Selection(
+        [
+            ("policy", "Use Policy Setting"),
+            ("manual", "Manual"),
+            ("automatic", "Automatic"),
+        ],
+        string="Warranty Registration",
+        default="policy",
+        required=True,
+        help="Choose whether this product follows the selected policy's Automatic Creation setting, always registers manually, or creates coverage automatically.",
+    )
     warranty_type_id = fields.Many2one(
         "warranty.type",
         string="Warranty Type",

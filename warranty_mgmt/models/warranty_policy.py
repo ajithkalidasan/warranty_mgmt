@@ -36,7 +36,7 @@ class WarrantyPolicy(models.Model):
         ],
         required=True,
         default="manual",
-        help="Connector modules can use this rule to decide which date is passed to the warranty engine.",
+        help="Automatic creation uses the source document date, current date, or completed delivery/receipt date when selected. Manual and QC dates need an available date source; otherwise the line is skipped and reported.",
     )
     apply_on = fields.Selection(
         [
@@ -49,7 +49,7 @@ class WarrantyPolicy(models.Model):
     )
     auto_create = fields.Boolean(
         string="Automatic Creation",
-        help="When enabled, connectors can ask the core engine to auto-pick this policy for matching products.",
+        help="Automatically create coverage when a matching customer invoice or vendor bill is posted. A product can inherit or override this setting.",
     )
     grace_days = fields.Integer(default=0)
     reminder_days = fields.Integer(
