@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_warranty_type_user,warranty.type user,model_warranty_type,warranty_mgmt.group_warranty_user,1,0,0,0
+access_warranty_type_manager,warranty.type manager,model_warranty_type,warranty_mgmt.group_warranty_manager,1,0,0,0
+access_warranty_type_admin,warranty.type admin,model_warranty_type,warranty_mgmt.group_warranty_admin,1,1,1,1
+access_warranty_policy_user,warranty.policy user,model_warranty_policy,warranty_mgmt.group_warranty_user,1,0,0,0
+access_warranty_policy_manager,warranty.policy manager,model_warranty_policy,warranty_mgmt.group_warranty_manager,1,0,0,0
+access_warranty_policy_admin,warranty.policy admin,model_warranty_policy,warranty_mgmt.group_warranty_admin,1,1,1,1
+access_warranty_coverage_user,warranty.coverage user,model_warranty_coverage,warranty_mgmt.group_warranty_user,1,1,1,0
+access_warranty_coverage_manager,warranty.coverage manager,model_warranty_coverage,warranty_mgmt.group_warranty_manager,1,1,1,0
+access_warranty_coverage_admin,warranty.coverage admin,model_warranty_coverage,warranty_mgmt.group_warranty_admin,1,1,1,0
+access_warranty_claim_user,warranty.claim user,model_warranty_claim,warranty_mgmt.group_warranty_user,1,1,1,0
+access_warranty_claim_manager,warranty.claim manager,model_warranty_claim,warranty_mgmt.group_warranty_manager,1,1,1,0
+access_warranty_claim_admin,warranty.claim admin,model_warranty_claim,warranty_mgmt.group_warranty_admin,1,1,1,0
+access_warranty_history_user,warranty.history user,model_warranty_history,warranty_mgmt.group_warranty_user,1,0,0,0
+access_warranty_history_manager,warranty.history manager,model_warranty_history,warranty_mgmt.group_warranty_manager,1,0,0,0
+access_warranty_history_admin,warranty.history admin,model_warranty_history,warranty_mgmt.group_warranty_admin,1,0,0,0
+access_warranty_dashboard_user,warranty.dashboard user,model_warranty_dashboard,warranty_mgmt.group_warranty_user,1,0,0,0

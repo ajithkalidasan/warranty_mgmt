@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="warranty_mgmt.WarrantyDashboard">
+    <div class="wd-dashboard">
+
+        <!-- ==================== HEADER ==================== -->
+        <div class="wd-header">
+            <div>
+                <h1>🛡️ Warranty Dashboard</h1>
+                <div class="wd-subtitle">Customer and supplier warranties, expiries and claims</div>
+            </div>
+            <button class="wd-refresh" t-on-click="onRefresh">
+                <span t-att-class="{'wd-spin': state.loading}">🔄</span> Refresh
+            </button>
+        </div>
+
+        <!-- ==================== LOADING ==================== -->
+        <t t-if="state.loading and !state.data">
+            <div class="wd-kpi-row">
+                <div class="wd-skeleton wd-skeleton-kpi" t-foreach="[1,2,3,4,5,6]" t-as="s" t-key="s"/>
+            </div>
+            <div class="wd-grid-2">
+                <div class="wd-skeleton wd-skeleton-table" t-foreach="[1,2]" t-as="s" t-key="s"/>
+            </div>
+        </t>
+
+        <t t-if="state.data">
+
+        <!-- ==================== KPI CARDS ==================== -->
+        <div class="wd-kpi-row">
+            <div class="wd-kpi green" t-on-click="() => this.viewActive()">
+                <div class="wd-kpi-icon">✅</div>
+                <div class="wd-kpi-info">
+                    <div class="wd-kpi-value" t-esc="state.data.kpis.active"/>
+                    <div class="wd-kpi-label">Active Warranties</div>
+                </div>
+            </div>
+
+            <div t-att-class="'wd-kpi ' + (state.data.kpis.expiring_soon > 0 ? 'orange' : 'green')"
+                 t-on-click="() => this.viewExpiring()">
+                <div class="wd-kpi-icon">⏳</div>
+                <div class="wd-kpi-info">
+                    <div class="wd-kpi-value" t-esc="state.data.kpis.expiring_soon"/>
+                    <div class="wd-kpi-label">Expiring in <t t-esc="state.data.kpis.expiry_window"/> days</div>
+                </div>
+            </div>
+
+            <div t-att-class="'wd-kpi ' + (state.data.kpis.expired > 0 ? 'red' : 'green')"
+                 t-on-click="() => this.viewExpired()">
+                <div class="wd-kpi-icon">⚠️</div>
+                <div class="wd-kpi-info">
+                    <div class="wd-kpi-value" t-esc="state.data.kpis.expired"/>
+                    <div class="wd-kpi-label">Expired</div>
+                </div>
+            </div>
+
+            <div class="wd-kpi blue" t-on-click="() => this.viewByOrigin('sale', 'Customer Invoice Warranties')">
+                <div class="wd-kpi-icon">🧾</div>
+                <div class="wd-kpi-info">
+                    <div class="wd-kpi-value" t-esc="state.data.kpis.sale_total"/>
+                    <div class="wd-kpi-label">Customer Invoice Warranties</div>
+                </div>
+            </div>
+
+            <div class="wd-kpi purple" t-on-click="() => this.viewByOrigin('purchase', 'Supplier Bill Warranties')">
+                <div class="wd-kpi-icon">📦</div>
+                <div class="wd-kpi-info">
+                    <div class="wd-kpi-value" t-esc="state.data.kpis.purchase_total"/>
+                    <div class="wd-kpi-label">Supplier Bill Warranties</div>
+                </div>
+            </div>
+
+            <div t-att-class="'wd-kpi ' + (state.data.kpis.open_claims > 0 ? 'orange' : 'green')"
+                 t-on-click="() => this.viewOpenClaims()">
+                <div class="wd-kpi-icon">🧾</div>
+                <div class="wd-kpi-info">
+                    <div class="wd-kpi-value" t-esc="state.data.kpis.open_claims"/>
+                    <div class="wd-kpi-label">Open Claims</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== ATTENTION ==================== -->
+        <div class="wd-card wd-card-alert" t-if="state.data.alerts.length">
+            <div class="wd-section-title">⚠️ Attention Required</div>
+            <t t-foreach="state.data.alerts" t-as="a" t-key="a_index">
+                <div class="wd-alert" t-on-click="() => this.openRecord(a.model, a.res_id)">
+                    <span class="wd-alert-icon" t-esc="a.icon"/>
+                    <span class="wd-alert-msg" t-esc="a.message"/>
+                </div>
+            </t>
+        </div>
+
+        <!-- ==================== LISTS ==================== -->
+        <div class="wd-grid-2">
+
+            <!-- Expiring soon -->
+            <div class="wd-card">
+                <div class="wd-section-title">
+                    ⏳ Expiring Soon
+                    <span class="wd-view-all" t-on-click="() => this.viewExpiring()">View All →</span>
+                </div>
+                <t t-if="state.data.expiring_list.length">
+                    <div class="wd-table-wrap">
+                        <table class="wd-table">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Product</th>
+                                    <th>Source</th>
+                                    <th>Expiry</th>
+                                    <th>Days</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="state.data.expiring_list" t-as="c" t-key="c.id"
+                                    t-on-click="() => this.openRecord('warranty.coverage', c.id)">
+                                    <td t-esc="c.name"/>
+                                    <td t-esc="c.product"/>
+                                    <td><span class="wd-badge wd-badge-blue" t-esc="c.source"/></td>
+                                    <td t-esc="c.expiry_date"/>
+                                    <td><span t-att-class="daysBadge(c.days_left)" t-esc="c.days_left + 'd'"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="wd-empty">No warranties expiring in the next <t t-esc="state.data.kpis.expiry_window"/> days 🎉</div>
+                </t>
+            </div>
+
+            <!-- Recent claims -->
+            <div class="wd-card">
+                <div class="wd-section-title">
+                    🧾 Recent Claims
+                    <span class="wd-view-all" t-on-click="() => this.viewAllClaims()">View All →</span>
+                </div>
+                <t t-if="state.data.recent_claims.length">
+                    <div class="wd-table-wrap">
+                        <table class="wd-table">
+                            <thead>
+                                <tr>
+                                    <th>Claim</th>
+                                    <th>Product</th>
+                                    <th>Warranty</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="state.data.recent_claims" t-as="c" t-key="c.id"
+                                    t-on-click="() => this.openRecord('warranty.claim', c.id)">
+                                    <td t-esc="c.name"/>
+                                    <td t-esc="c.product"/>
+                                    <td t-esc="c.coverage"/>
+                                    <td><span t-att-class="claimBadge(c.state)" t-esc="c.status"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="wd-empty">No claims yet.</div>
+                </t>
+            </div>
+        </div>
+
+        <!-- ==================== CHARTS ==================== -->
+        <div class="wd-grid-2">
+
+            <!-- Coverage by state -->
+            <div class="wd-card">
+                <div class="wd-section-title">📊 Warranties by Status</div>
+                <t t-if="state.data.coverage_by_state.length">
+                    <div class="wd-chart">
+                        <div class="wd-bar-col" t-foreach="state.data.coverage_by_state" t-as="b" t-key="b_index"
+                             t-on-click="() => this.viewCoveragesByState(b.key)">
+                            <div class="wd-bar-value" t-esc="b.count"/>
+                            <div class="wd-bar"
+                                 t-attf-style="height:{{ barHeight(state.data.coverage_by_state, b.count) }}px;background:{{ barColor(b_index) }}"/>
+                            <div class="wd-bar-label" t-esc="b.label"/>
+                        </div>
+                    </div>
+                </t>
+                <t t-else=""><div class="wd-empty">No data.</div></t>
+            </div>
+
+            <!-- Claims by status -->
+            <div class="wd-card">
+                <div class="wd-section-title">📈 Claims by Status</div>
+                <t t-if="state.data.claims_by_status.length">
+                    <div class="wd-chart">
+                        <div class="wd-bar-col" t-foreach="state.data.claims_by_status" t-as="b" t-key="b_index"
+                             t-on-click="() => this.viewClaimsByState(b.key)">
+                            <div class="wd-bar-value" t-esc="b.count"/>
+                            <div class="wd-bar"
+                                 t-attf-style="height:{{ barHeight(state.data.claims_by_status, b.count) }}px;background:{{ barColor(b_index) }}"/>
+                            <div class="wd-bar-label" t-esc="b.label"/>
+                        </div>
+                    </div>
+                </t>
+                <t t-else=""><div class="wd-empty">No claims yet.</div></t>
+            </div>
+        </div>
+
+        </t>
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_warranty_claim_list" model="ir.ui.view">
+        <field name="name">warranty.claim.list</field>
+        <field name="model">warranty.claim</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'submitted'" decoration-success="state in ('approved', 'resolved')" decoration-danger="state == 'rejected'">
+                <field name="name"/>
+                <field name="claim_date"/>
+                <field name="coverage_id"/>
+                <field name="lot_id"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="policy_id"/>
+                <field name="state"/>
+                <field name="user_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_warranty_claim_form" model="ir.ui.view">
+        <field name="name">warranty.claim.form</field>
+        <field name="model">warranty.claim</field>
+        <field name="arch" type="xml">
+            <form string="Warranty Claim">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary" groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" groups="warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin" invisible="state != 'submitted'"/>
+                    <button name="action_reject" type="object" string="Reject" class="btn-secondary" groups="warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin" invisible="state != 'submitted'"/>
+                    <button name="action_resolve" type="object" string="Resolve" groups="warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin" invisible="state != 'approved'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected,resolved"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="coverage_id"/>
+                            <field name="policy_id" readonly="1"/>
+                            <field name="claim_date"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <group>
+                        <field name="diagnosis"/>
+                    </group>
+                    <group>
+                        <field name="decision_note"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_warranty_claim_search" model="ir.ui.view">
+        <field name="name">warranty.claim.search</field>
+        <field name="model">warranty.claim</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="lot_id"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="policy_id"/>
+                <field name="state"/>
+
+                <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="resolved" string="Resolved" domain="[('state', '=', 'resolved')]"/>
+                <filter name="my_records" string="My Records" domain="[('user_id', '=', uid)]"/>
+
+                <group>
+                    <filter name="group_policy" string="Policy" context="{'group_by': 'policy_id'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_warranty_claim" model="ir.actions.act_window">
+        <field name="name">Warranty Claims</field>
+        <field name="res_model">warranty.claim</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_warranty_claim_search"/>
+        <field name="context">{'search_default_my_records': 1}</field>
+    </record>
+</odoo>

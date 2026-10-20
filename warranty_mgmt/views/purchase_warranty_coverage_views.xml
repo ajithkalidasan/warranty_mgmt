@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="warranty_coverage_view_form_purchase" model="ir.ui.view">
+        <field name="name">warranty.coverage.form.purchase</field>
+        <field name="model">warranty.coverage</field>
+        <field name="inherit_id" ref="warranty_mgmt.view_warranty_coverage_form"/>
+        <field name="arch" type="xml">
+            <field name="source_ref" position="after">
+                <field name="purchase_order_id" invisible="not purchase_order_id"/>
+                <field name="purchase_order_line_id" invisible="not purchase_order_line_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

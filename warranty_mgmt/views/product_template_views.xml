@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_only_form_view_warranty" model="ir.ui.view">
+        <field name="name">product.template.only.form.warranty</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='sales']" position="after">
+                <page string="Warranty" name="warranty" groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin">
+                    <group>
+                        <group>
+                            <field name="warranty_enabled"/>
+                            <field name="warranty_policy_id" invisible="not warranty_enabled"/>
+                            <field name="warranty_type_id" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>
+                            <field name="warranty_duration" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>
+                            <field name="warranty_duration_unit" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>
+                        </group>
+                        <group>
+                            <field name="warranty_start_from" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>
+                            <field name="warranty_grace_days" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>
+                            <field name="warranty_reminder_days" readonly="1" invisible="not warranty_enabled or not warranty_policy_id"/>
+                        </group>
+                    </group>
+                    <group invisible="not warranty_enabled">
+                        <div class="o_form_label">
+                            Leave Warranty Policy empty to let the core warranty engine choose a matching active policy for this product.
+                        </div>
+                    </group>
+                    <group invisible="not warranty_enabled or not warranty_policy_id">
+                        <group string="Coverage">
+                            <field name="warranty_covered_items" readonly="1" nolabel="1"/>
+                        </group>
+                        <group string="Exclusions">
+                            <field name="warranty_exclusion_items" readonly="1" nolabel="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+

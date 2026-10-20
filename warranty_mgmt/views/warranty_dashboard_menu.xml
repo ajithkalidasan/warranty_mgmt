@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_warranty_dashboard" model="ir.actions.client">
+            <field name="name">Warranty Dashboard</field>
+            <field name="tag">warranty_dashboard</field>
+        </record>
+
+        <menuitem
+            id="menu_warranty_dashboard"
+            name="Dashboard"
+            parent="warranty_mgmt.menu_warranty_root"
+            action="action_warranty_dashboard"
+            sequence="1"
+            groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"/>
+    </data>
+</odoo>

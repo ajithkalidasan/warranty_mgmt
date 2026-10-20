@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Module category -->
+    <record id="module_category_warranty" model="ir.module.category">
+        <field name="name">Warranty</field>
+        <field name="description">Warranty management and claims</field>
+        <field name="sequence">35</field>
+    </record>
+
+    <!-- Odoo 19 privilege -->
+    <record id="privilege_warranty" model="res.groups.privilege">
+        <field name="name">Warranty</field>
+        <field name="sequence">35</field>
+        <field name="category_id" ref="warranty_mgmt.module_category_warranty"/>
+    </record>
+
+    <record id="group_warranty_user" model="res.groups">
+        <field name="name">Warranty User</field>
+        <field name="privilege_id" ref="warranty_mgmt.privilege_warranty"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_warranty_manager" model="res.groups">
+        <field name="name">Warranty Manager</field>
+        <field name="privilege_id" ref="warranty_mgmt.privilege_warranty"/>
+        <field name="implied_ids" eval="[(4, ref('warranty_mgmt.group_warranty_user'))]"/>
+    </record>
+
+    <record id="group_warranty_admin" model="res.groups">
+        <field name="name">Warranty Admin</field>
+        <field name="privilege_id" ref="warranty_mgmt.privilege_warranty"/>
+        <field name="implied_ids" eval="[(4, ref('warranty_mgmt.group_warranty_manager'))]"/>
+    </record>
+
+    <record id="rule_warranty_coverage_user" model="ir.rule">
+        <field name="name">Warranty Coverage: own records</field>
+        <field name="model_id" ref="model_warranty_coverage"/>
+        <field name="groups" eval="[(4, ref('warranty_mgmt.group_warranty_user'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id), ('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_warranty_coverage_manager" model="ir.rule">
+        <field name="name">Warranty Coverage: manager access</field>
+        <field name="model_id" ref="model_warranty_coverage"/>
+        <field name="groups" eval="[(4, ref('warranty_mgmt.group_warranty_manager'))]"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_warranty_claim_user" model="ir.rule">
+        <field name="name">Warranty Claim: own records</field>
+        <field name="model_id" ref="model_warranty_claim"/>
+        <field name="groups" eval="[(4, ref('warranty_mgmt.group_warranty_user'))]"/>
+        <field name="domain_force">[('company_id', 'in', company_ids), '|', ('user_id', '=', user.id), ('coverage_id.user_id', '=', user.id)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_warranty_claim_manager" model="ir.rule">
+        <field name="name">Warranty Claim: manager access</field>
+        <field name="model_id" ref="model_warranty_claim"/>
+        <field name="groups" eval="[(4, ref('warranty_mgmt.group_warranty_manager'))]"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_warranty_history_user" model="ir.rule">
+        <field name="name">Warranty History: own records</field>
+        <field name="model_id" ref="model_warranty_history"/>
+        <field name="groups" eval="[(4, ref('warranty_mgmt.group_warranty_user'))]"/>
+        <field name="domain_force">[('company_id', 'in', company_ids), '|', ('user_id', '=', user.id), ('coverage_id.user_id', '=', user.id)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="rule_warranty_history_manager" model="ir.rule">
+        <field name="name">Warranty History: manager access</field>
+        <field name="model_id" ref="model_warranty_history"/>
+        <field name="groups" eval="[(4, ref('warranty_mgmt.group_warranty_manager'))]"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

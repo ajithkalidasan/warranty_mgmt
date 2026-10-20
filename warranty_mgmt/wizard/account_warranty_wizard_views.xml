@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_warranty_wizard_view_form" model="ir.ui.view">
+        <field name="name">account.warranty.wizard.form</field>
+        <field name="model">account.warranty.wizard</field>
+        <field name="arch" type="xml">
+                <form string="Warranty Registration">
+                <field name="move_id" invisible="1"/>
+                <field name="move_type" invisible="1"/>
+                <group>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="warranty_origin"/>
+                    </group>
+                    <group>
+                        <field name="start_date"/>
+                    </group>
+                </group>
+                <separator string="Products"/>
+                <p class="text-muted" invisible="move_type != 'out_invoice'">
+                    Choose the warranty the customer gets for each product sold.
+                    Parts already covered by a repair warranty are not listed here,
+                    so the same goods are never covered twice.
+                </p>
+                <p class="text-muted" invisible="move_type != 'in_invoice'">
+                    Choose the warranty the vendor grants for each product billed.
+                    The duration comes from the selected warranty but the From/To
+                    dates can be changed for this bill without affecting the policy.
+                </p>
+                <field name="line_ids">
+                    <list editable="bottom" create="0">
+                        <field name="selected" string="Give" widget="boolean_toggle"/>
+                        <field name="product_id" readonly="1" force_save="1"/>
+                        <field name="lot_id" options="{'no_create': True}"/>
+                        <field name="policy_id"
+                               required="selected"
+                               options="{'no_create': True}"/>
+                        <field name="duration" readonly="not policy_id"/>
+                        <field name="duration_unit" readonly="not policy_id"/>
+                        <field name="start_date"/>
+                        <field name="expiry_date"/>
+                        <field name="invoice_line_id" column_invisible="1"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_confirm"
+                            type="object"
+                            string="Give Customer Warranty"
+                            class="btn-primary"
+                            data-hotkey="q"
+                            invisible="move_type != 'out_invoice'"/>
+                    <button name="action_confirm"
+                            type="object"
+                            string="Register Supplier Warranty"
+                            class="btn-primary"
+                            data-hotkey="q"
+                            invisible="move_type != 'in_invoice'"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"
+                            data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

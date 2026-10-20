@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_warranty_coverage_list" model="ir.ui.view">
+        <field name="name">warranty.coverage.list</field>
+        <field name="model">warranty.coverage</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'active'" decoration-warning="state == 'claimed'" decoration-danger="state in ('expired', 'void', 'cancelled')">
+                <field name="name"/>
+                <field name="warranty_origin"/>
+                <field name="lot_id"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="policy_id"/>
+                <field name="start_date"/>
+                <field name="expiry_date"/>
+                <field name="claim_count"/>
+                <field name="state"/>
+                <field name="user_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_warranty_coverage_form" model="ir.ui.view">
+        <field name="name">warranty.coverage.form</field>
+        <field name="model">warranty.coverage</field>
+        <field name="arch" type="xml">
+            <form string="Warranty Coverage">
+                <header>
+                    <button name="action_activate" type="object" string="Activate" class="btn-primary" groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin" invisible="state not in ('draft', 'cancelled')"/>
+                    <button name="action_create_claim" type="object" string="Create Claim" class="btn-secondary" groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin" invisible="not can_create_claim"/>
+                    <button name="void_warranty" type="object" string="Void" groups="warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin" invisible="state in ('void', 'cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancel" groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin" invisible="state in ('void', 'expired', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,claimed,expired,void,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_create_claim" type="object" class="oe_stat_button" icon="fa-life-ring" invisible="not can_create_claim">
+                            <field name="claim_count" string="Claims" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="policy_id"/>
+                            <field name="type_id"/>
+                            <field name="partner_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="start_date"/>
+                            <field name="expiry_date"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Source">
+                        <group>
+                            <field name="warranty_origin"/>
+                            <field name="source_model"/>
+                            <field name="source_id"/>
+                            <field name="source_ref"/>
+                        </group>
+                        <group>
+                            <field name="pre_expiry_notified" readonly="1"/>
+                            <field name="expiry_notified" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Claims">
+                            <field name="claim_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="claim_date"/>
+                                    <field name="partner_id"/>
+                                    <field name="state"/>
+                                    <field name="user_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="History">
+                            <field name="history_ids" readonly="1">
+                                <list>
+                                    <field name="event_date"/>
+                                    <field name="event"/>
+                                    <field name="user_id"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_warranty_coverage_search" model="ir.ui.view">
+        <field name="name">warranty.coverage.search</field>
+        <field name="model">warranty.coverage</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="lot_id"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="policy_id"/>
+                <field name="state"/>
+                <field name="warranty_origin"/>
+
+                <filter name="origin_sale" string="Sale Warranties" domain="[('warranty_origin', '=', 'sale')]"/>
+                <filter name="origin_repair" string="Repair Warranties" domain="[('warranty_origin', '=', 'repair')]"/>
+                <filter name="origin_purchase" string="Vendor Warranties" domain="[('warranty_origin', '=', 'purchase')]"/>
+                <separator/>
+                <filter name="active" string="Active" domain="[('state', '=', 'active')]"/>
+                <filter name="claimed" string="Claimed" domain="[('state', '=', 'claimed')]"/>
+                <filter name="expired" string="Expired" domain="[('state', '=', 'expired')]"/>
+                <filter name="my_records" string="My Records" domain="[('user_id', '=', uid)]"/>
+
+                <group>
+                    <filter name="group_origin" string="Origin" context="{'group_by': 'warranty_origin'}"/>
+                    <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_policy" string="Policy" context="{'group_by': 'policy_id'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_warranty_coverage" model="ir.actions.act_window">
+        <field name="name">Warranty Coverage</field>
+        <field name="res_model">warranty.coverage</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_warranty_coverage_search"/>
+        <field name="context">{'search_default_my_records': 1}</field>
+    </record>
+</odoo>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_warranty_root"
+        name="Warranty"
+        sequence="20"
+        action="action_warranty_coverage"
+        groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"
+    />
+
+    <menuitem
+        id="menu_warranty_coverage"
+        name="Coverage"
+        parent="menu_warranty_root"
+        action="action_warranty_coverage"
+        sequence="10"
+        groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"
+    />
+
+    <menuitem
+        id="menu_warranty_claim"
+        name="Claims"
+        parent="menu_warranty_root"
+        action="action_warranty_claim"
+        sequence="20"
+        groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"
+    />
+
+    <menuitem
+        id="menu_warranty_history"
+        name="History"
+        parent="menu_warranty_root"
+        action="action_warranty_history"
+        sequence="30"
+        groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"
+    />
+
+    <menuitem
+        id="menu_warranty_configuration"
+        name="Configuration"
+        parent="menu_warranty_root"
+        sequence="90"
+        groups="warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"
+    />
+
+    <menuitem
+        id="menu_warranty_policy"
+        name="Policies"
+        parent="menu_warranty_configuration"
+        action="action_warranty_policy"
+        sequence="10"
+        groups="warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"
+    />
+
+    <menuitem
+        id="menu_warranty_type"
+        name="Types"
+        parent="menu_warranty_configuration"
+        action="action_warranty_type"
+        sequence="20"
+        groups="warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"
+    />
+</odoo>

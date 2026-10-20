@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_move_view_form_warranty" model="ir.ui.view">
+        <field name="name">account.move.form.warranty</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+
+            <div name="button_box" position="inside">
+                <button class="oe_stat_button"
+                        name="action_view_warranty_coverages"
+                        icon="fa-shield"
+                        type="object"
+                        invisible="warranty_coverage_count == 0"
+                        groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin">
+                    <field name="warranty_coverage_count" string="Warranties" widget="statinfo"/>
+                </button>
+            </div>
+
+            <xpath expr="//header/field[@name='state'][1]" position="before">
+                <field name="warranty_can_give" invisible="1"/>
+                <button name="action_give_customer_warranty"
+                        type="object"
+                        string="Give Customer Warranty"
+                        data-hotkey="w"
+                        invisible="not warranty_can_give or move_type != 'out_invoice'"
+                        groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"/>
+                <button name="action_register_supplier_warranty"
+                        type="object"
+                        string="Register Supplier Warranty"
+                        data-hotkey="w"
+                        invisible="not warranty_can_give or move_type != 'in_invoice'"
+                        groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"/>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Warranty"
+                      name="warranty"
+                      groups="warranty_mgmt.group_warranty_user,warranty_mgmt.group_warranty_manager,warranty_mgmt.group_warranty_admin"
+                      invisible="warranty_coverage_count == 0">
+                    <field name="warranty_coverage_ids" readonly="1">
+                        <list decoration-success="state == 'active'"
+                              decoration-danger="state in ('expired', 'void', 'cancelled')">
+                            <field name="name"/>
+                            <field name="warranty_origin"/>
+                            <field name="product_id"/>
+                            <field name="lot_id" optional="show"/>
+                            <field name="policy_id"/>
+                            <field name="start_date"/>
+                            <field name="expiry_date"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
